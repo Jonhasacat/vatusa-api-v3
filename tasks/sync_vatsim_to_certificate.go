@@ -20,7 +20,6 @@ type RosterPage struct {
 func FetchDivisionRosterPage(page uint) ([]vatsim.Member, error) {
 	client := http.Client{}
 	url := fmt.Sprintf("%s/v2/orgs/division/USA?limit=%d&offset=%d", os.Getenv("VATSIM_API_URL"), PageSize, page*PageSize)
-	url = fmt.Sprintf("%s/v2/orgs/division/USA", os.Getenv("VATSIM_API_URL"))
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
