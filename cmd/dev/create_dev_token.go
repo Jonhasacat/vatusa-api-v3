@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
-	"github.com/VATUSA/api-v3/internal/tasks"
 	database2 "github.com/VATUSA/api-v3/pkg/database"
 )
 
@@ -19,6 +19,13 @@ func main() {
 	if err != nil {
 		return
 	}
-	page, err := tasks.FetchDivisionRosterPage(0)
-	print(page)
+	user, err := database2.CreateAPIUser("Development API User", "*")
+	if err != nil {
+		return
+	}
+	token, err := database2.GenerateAPIToken(user, nil)
+	if err != nil {
+		return
+	}
+	print(fmt.Sprintf("Token Generated: %s", token.Token))
 }
