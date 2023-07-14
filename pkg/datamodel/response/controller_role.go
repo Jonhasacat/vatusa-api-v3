@@ -11,7 +11,7 @@ type ControllerRole struct {
 
 func MakeControllerRoleResponse(r *database.ControllerRole) *ControllerRole {
 	return &ControllerRole{
-		Facility: string(r.Facility),
-		Role:     string(r.Role),
+		Facility: r.Facility,
+		Role:     r.Role,
 	}
 }

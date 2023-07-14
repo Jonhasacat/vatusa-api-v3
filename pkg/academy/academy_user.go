@@ -41,7 +41,7 @@ func SyncRoles(a *db.AcademyUser) error {
 		}
 	}
 
-	if controller.HasRole(a.Controller, role.RoleInstructor, a.Controller.Facility) {
+	if controller.HasRole(a.Controller, role.Instructor, a.Controller.Facility) {
 		err = addFacilityRole(a, RoleInstructor, "USA")
 		if err != nil {
 			return err
@@ -58,7 +58,7 @@ func SyncRoles(a *db.AcademyUser) error {
 			return err
 		}
 
-		if controller.HasRole(a.Controller, role.RoleInstructor, v.Facility) {
+		if controller.HasRole(a.Controller, role.Instructor, v.Facility) {
 			err = addFacilityRole(a, RoleInstructor, v.Facility)
 			if err != nil {
 				return err
@@ -75,7 +75,7 @@ func clearRoles(a *db.AcademyUser) error {
 }
 
 func addFacilityRole(a *db.AcademyUser, roleID uint64, facility facility.Facility) error {
-	return addCategoryRole(a, roleID, string(facility))
+	return addCategoryRole(a, roleID, facility)
 }
 
 func addCategoryRole(a *db.AcademyUser, roleID uint64, category string) error {
@@ -96,7 +96,7 @@ func SyncCohorts(a *db.AcademyUser) error {
 	}
 
 	// Home Facility Cohort
-	cohorts = append(cohorts, string(a.Controller.Facility))
+	cohorts = append(cohorts, a.Controller.Facility)
 
 	if controller.HasRole(a.Controller, "MTR", a.Controller.Facility) {
 		cohorts = append(cohorts, "TNG")

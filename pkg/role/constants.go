@@ -1,30 +1,30 @@
 package role
 
-type Role string
+type Role = string
 
 // Facility Staff Roles
 const (
-	RoleAirTrafficManager       Role = "ATM"
-	RoleDeputyAirTrafficManager Role = "DATM"
-	RoleTrainingAdministrator   Role = "TA"
-	RoleEventCoordinator        Role = "EC"
-	RoleFacilityEngineer        Role = "FC"
-	RoleWebMaster               Role = "WM"
-	RoleInstructor              Role = "INS"
-	RoleMentor                  Role = "MTR"
+	AirTrafficManager       Role = "ATM"
+	DeputyAirTrafficManager Role = "DATM"
+	TrainingAdministrator   Role = "TA"
+	EventCoordinator        Role = "EC"
+	FacilityEngineer        Role = "FC"
+	WebMaster               Role = "WM"
+	Instructor              Role = "INS"
+	Mentor                  Role = "MTR"
 )
 
 // Division Team Roles
 const (
-	RoleACETeam  Role = "ACE"
-	RoleDICETeam Role = "DICE"
-	RoleDCCTeam  Role = "DCC"
-	RoleTechTeam Role = "TECH"
+	ACETeam  Role = "ACE"
+	DICETeam Role = "DICE"
+	DCCTeam  Role = "DCC"
+	TechTeam Role = "TECH"
 )
 
 // Division Staff Roles
 const (
-	RoleSystemAdministrator Role = "SYSADM"
-	RoleDivisionManagement  Role = "DIVISION_MANAGEMENT"
-	RoleDivisionStaff       Role = "DIVISION_STAFF"
+	SystemAdministrator Role = "SYSADM"
+	DivisionManagement  Role = "DIVISION_MANAGEMENT"
+	DivisionStaff       Role = "DIVISION_STAFF"
 )

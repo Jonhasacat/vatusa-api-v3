@@ -31,7 +31,7 @@ func MakeTrainingRecordResponse(tr *database.TrainingRecord) *TrainingRecord {
 		InstructorCID:       tr.InstructorCID,
 		Instructor:          MakeController(tr.Instructor),
 		SessionTime:         tr.SessionTime,
-		Facility:            string(tr.Facility),
+		Facility:            tr.Facility,
 		Position:            tr.Position,
 		DurationMinutes:     tr.DurationMinutes,
 		AircraftMovements:   tr.AircraftMovements,

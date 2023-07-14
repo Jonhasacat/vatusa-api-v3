@@ -1,6 +1,6 @@
 package hold
 
-type Hold string
+type Hold = string
 
 const (
 	Academy         Hold = "ACADEMY"

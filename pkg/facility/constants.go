@@ -1,6 +1,6 @@
 package facility
 
-type Facility string
+type Facility = string
 
 const (
 	Academy      Facility = "ZAE"

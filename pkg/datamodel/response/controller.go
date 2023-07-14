@@ -45,7 +45,7 @@ func MakeController(c *database.Controller) *Controller {
 			Short: rating.ShortMap[rating.Rating(c.ATCRating)],
 			Long:  rating.LongMap[rating.Rating(c.ATCRating)],
 		},
-		Facility:            string(c.Facility),
+		Facility:            c.Facility,
 		FacilityJoin:        c.FacilityJoin,
 		LastPromotion:       c.LastPromotion,
 		InDivision:          c.IsInDivision,
@@ -62,7 +62,7 @@ func MakeController(c *database.Controller) *Controller {
 		model.Roles = append(model.Roles, *MakeControllerRoleResponse(&r))
 	}
 	for _, v := range c.Visits {
-		model.Visits = append(model.Visits, string(v.Facility))
+		model.Visits = append(model.Visits, v.Facility)
 	}
 	for _, rc := range c.RatingChanges {
 		model.RatingChanges = append(model.RatingChanges, *MakeControllerRatingChange(&rc))

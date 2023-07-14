@@ -12,8 +12,8 @@ type ControllerTransfer struct {
 
 func MakeControllerTransfer(t *database.Transfer) *ControllerTransfer {
 	transfer := &ControllerTransfer{
-		FromFacility: string(t.FromFacility),
-		ToFacility:   string(t.ToFacility),
+		FromFacility: t.FromFacility,
+		ToFacility:   t.ToFacility,
 		Reason:       t.Reason,
 	}
 	return transfer

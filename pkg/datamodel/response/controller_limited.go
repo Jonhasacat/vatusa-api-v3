@@ -35,7 +35,7 @@ func MakeControllerLimited(c *database.Controller) *ControllerLimited {
 			Short: rating.ShortMap[rating.Rating(c.ATCRating)],
 			Long:  rating.LongMap[rating.Rating(c.ATCRating)],
 		},
-		Facility:      string(c.Facility),
+		Facility:      c.Facility,
 		FacilityJoin:  c.FacilityJoin,
 		LastPromotion: c.LastPromotion,
 		InDivision:    c.IsInDivision,
@@ -47,7 +47,7 @@ func MakeControllerLimited(c *database.Controller) *ControllerLimited {
 		model.Roles = append(model.Roles, *MakeControllerRoleResponse(&v))
 	}
 	for _, v := range c.Visits {
-		model.Visits = append(model.Visits, string(v.Facility))
+		model.Visits = append(model.Visits, v.Facility)
 	}
 	return model
 }

@@ -11,7 +11,7 @@ import (
 func AddHold(controller *database.Controller, hold Hold, reason string, requester *database.Controller) error {
 	record := database.ControllerHold{
 		Controller: controller,
-		Hold:       string(hold),
+		Hold:       hold,
 		ExpiresAt:  time.Time{},
 	}
 	err := record.Save()
@@ -24,7 +24,7 @@ func AddHold(controller *database.Controller, hold Hold, reason string, requeste
 
 func RemoveHold(controller *database.Controller, hold Hold, reason string, requester *database.Controller) error {
 	for _, h := range controller.Holds {
-		if h.Hold == string(hold) {
+		if h.Hold == hold {
 			err := h.Delete()
 			if err != nil {
 				return err

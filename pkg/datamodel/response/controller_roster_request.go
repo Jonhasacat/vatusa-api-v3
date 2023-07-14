@@ -20,7 +20,7 @@ func MakeControllerRosterRequestResponse(r *database.ControllerRosterRequest) *C
 	return &ControllerRosterRequest{
 		ID:           r.ID,
 		Controller:   MakeController(r.Controller),
-		Facility:     string(r.Facility),
+		Facility:     r.Facility,
 		RequestType:  r.RequestType,
 		Reason:       r.Reason,
 		RequesterID:  r.RequesterID,

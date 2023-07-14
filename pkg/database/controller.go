@@ -9,8 +9,8 @@ import (
 type Controller struct {
 	Id                        uint64 `gorm:"primarykey;autoIncrement:false"`
 	CertificateId             uint64
-	Certificate               *Certificate      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Facility                  facility.Facility `gorm:"size:4"`
+	Certificate               *Certificate `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Facility                  string       `gorm:"size:4"`
 	FacilityJoin              *time.Time
 	ATCRating                 int
 	LastPromotion             *time.Time
