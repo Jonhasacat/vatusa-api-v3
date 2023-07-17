@@ -1,4 +1,4 @@
-package controller
+package roster
 
 import (
 	db "github.com/VATUSA/api-v3/pkg/database"

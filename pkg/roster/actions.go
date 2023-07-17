@@ -1,16 +1,17 @@
-package controller
+package roster
 
 import (
 	"errors"
 	"fmt"
 	"github.com/VATUSA/api-v3/pkg/action_log"
+	"github.com/VATUSA/api-v3/pkg/controller"
 	"github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/facility"
 	"github.com/VATUSA/api-v3/pkg/role"
 )
 
 func RequestTransfer(c *database.Controller, fac facility.Facility, reason string) error {
-	if !IsTransferEligible(c) {
+	if !controller.IsTransferEligible(c) {
 		return errors.New(fmt.Sprintf("Controller %d is not eligible for transfer", c.CertificateId))
 	}
 	if !facility.IsRosterFacility(fac) {
@@ -69,7 +70,7 @@ func AddVisitor(c *database.Controller, fac facility.Facility, requester *databa
 		return errors.New(fmt.Sprintf(
 			"controller %d is in %s and can not visit", c.Id, c.Facility))
 	}
-	if !IsVisitEligible(c) {
+	if !controller.IsVisitEligible(c) {
 		return errors.New(fmt.Sprintf("controller %d is not eligible to visit", c.Id))
 	}
 	if !facility.IsRosterFacility(fac) {

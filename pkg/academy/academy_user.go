@@ -2,7 +2,6 @@ package academy
 
 import (
 	"fmt"
-	"github.com/VATUSA/api-v3/pkg/controller"
 	db "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/facility"
 	"github.com/VATUSA/api-v3/pkg/rating"
@@ -30,7 +29,7 @@ func SyncRoles(a *db.AcademyUser) error {
 		return err
 	}
 
-	if controller.IsSeniorStaff(a.Controller, a.Controller.Facility) {
+	if role.IsSeniorStaff(a.Controller, a.Controller.Facility) {
 		err = addFacilityRole(a, RoleInstructor, "USA")
 		if err != nil {
 			return err
@@ -41,7 +40,7 @@ func SyncRoles(a *db.AcademyUser) error {
 		}
 	}
 
-	if controller.HasRole(a.Controller, role.Instructor, a.Controller.Facility) {
+	if role.HasRole(a.Controller, role.Instructor, a.Controller.Facility) {
 		err = addFacilityRole(a, RoleInstructor, "USA")
 		if err != nil {
 			return err
@@ -58,7 +57,7 @@ func SyncRoles(a *db.AcademyUser) error {
 			return err
 		}
 
-		if controller.HasRole(a.Controller, role.Instructor, v.Facility) {
+		if role.HasRole(a.Controller, role.Instructor, v.Facility) {
 			err = addFacilityRole(a, RoleInstructor, v.Facility)
 			if err != nil {
 				return err
@@ -98,12 +97,12 @@ func SyncCohorts(a *db.AcademyUser) error {
 	// Home Facility Cohort
 	cohorts = append(cohorts, a.Controller.Facility)
 
-	if controller.HasRole(a.Controller, "MTR", a.Controller.Facility) {
+	if role.HasRole(a.Controller, "MTR", a.Controller.Facility) {
 		cohorts = append(cohorts, "TNG")
 		cohorts = append(cohorts, "MTR")
 		cohorts = append(cohorts, fmt.Sprintf("%s-MTR", a.Controller.Facility))
 	}
-	if controller.HasRole(a.Controller, "INS", a.Controller.Facility) {
+	if role.HasRole(a.Controller, "INS", a.Controller.Facility) {
 		cohorts = append(cohorts, "TNG")
 		cohorts = append(cohorts, "INS")
 		cohorts = append(cohorts, fmt.Sprintf("%s-INS", a.Controller.Facility))
@@ -112,10 +111,10 @@ func SyncCohorts(a *db.AcademyUser) error {
 	// Visitor Cohorts
 	for _, v := range a.Controller.Visits {
 		cohorts = append(cohorts, fmt.Sprintf("%s-V", v.Facility))
-		if controller.HasRole(a.Controller, "MTR", v.Facility) {
+		if role.HasRole(a.Controller, "MTR", v.Facility) {
 			cohorts = append(cohorts, fmt.Sprintf("%s-MTR", v.Facility))
 		}
-		if controller.HasRole(a.Controller, "INS", v.Facility) {
+		if role.HasRole(a.Controller, "INS", v.Facility) {
 			cohorts = append(cohorts, fmt.Sprintf("%s-INS", v.Facility))
 		}
 	}

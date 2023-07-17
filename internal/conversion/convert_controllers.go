@@ -1,24 +1,25 @@
 package conversion
 
 import (
-	legacydb2 "github.com/VATUSA/api-v3/internal/conversion/legacydb"
-	database2 "github.com/VATUSA/api-v3/pkg/database"
+	"fmt"
+	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
+	"github.com/VATUSA/api-v3/pkg/async"
+	db "github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/rating"
+	"github.com/VATUSA/api-v3/pkg/role"
 	"time"
 )
 
-func LoadLegacyControllers() ([]legacydb2.Controller, error) {
-	var controllers []legacydb2.Controller
-	result := legacydb2.DB.Model(legacydb2.Controller{}).Find(&controllers)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return controllers, nil
-}
+const (
+	WorkerCount    = 10
+	RecordsPerPage = 100
+)
 
-func ProcessLegacyController(legacy legacydb2.Controller) error {
-	certificate, _ := database2.FetchCertificateByID(legacy.CID)
+func ProcessLegacyController(legacy legacydb.Controller) error {
+	certificate, _ := db.FetchCertificateByID(legacy.CID)
 	if certificate == nil {
-		certificate = &database2.Certificate{
+		certificate = &db.Certificate{
 			ID:                     legacy.CID,
 			FirstName:              legacy.FName,
 			LastName:               legacy.LName,
@@ -32,13 +33,16 @@ func ProcessLegacyController(legacy legacydb2.Controller) error {
 			Division:               nil,
 			SubDivision:            nil,
 			LastRatingChange:       nil,
-			CertificateUpdateStamp: time.Now(),
+			CertificateUpdateStamp: time.Unix(0, 0),
 		}
-		certificate.Save()
+		err := certificate.Save()
+		if err != nil {
+			return err
+		}
 	}
-	controller, _ := database2.FetchControllerByCID(legacy.CID)
+	controller, _ := db.FetchControllerByCID(legacy.CID)
 	if controller == nil {
-		controller := database2.Controller{
+		controller = &db.Controller{
 			Id:                        legacy.CID,
 			CertificateId:             legacy.CID,
 			Certificate:               certificate,
@@ -51,23 +55,63 @@ func ProcessLegacyController(legacy legacydb2.Controller) error {
 			IsActive:                  false,
 			DiscordId:                 legacy.DiscordId,
 		}
-		controller.Save()
+		db.DB.Create(&controller)
 	} else {
 
+	}
+	if controller.IsInDivision &&
+		facility.IsRosterFacility(controller.Facility) &&
+		(controller.ATCRating == rating.I1 || controller.ATCRating == rating.I3) {
+		if !role.HasRole(controller, role.Instructor, controller.Facility) {
+			err := role.AddRole(controller, role.Instructor, controller.Facility, nil)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	if controller.ATCRating < rating.Observer || controller.ATCRating > rating.I3 {
+		if controller.ATCRating > rating.I3 && role.HasRole(controller, role.TrainingAdministrator, controller.Facility) {
+			controller.ATCRating = rating.I3
+		} else if controller.ATCRating > rating.I3 && role.HasRole(controller, role.Instructor, controller.Facility) {
+			controller.ATCRating = rating.I1
+		}
+		// TODO: Determine which ATCRating they should be
 	}
 	return nil
 }
 
-func ConvertControllers() error {
-	controllers, err := LoadLegacyControllers()
-	if err != nil {
-		return err
+func LoadLegacyControllerPage(page int) ([]legacydb.Controller, error) {
+	println(fmt.Sprintf("loading page %d", page))
+	var controllers []legacydb.Controller
+	result := legacydb.DB.Model(legacydb.Controller{}).Limit(RecordsPerPage).Offset(RecordsPerPage * page).Find(&controllers)
+	if result.Error != nil {
+		return nil, result.Error
 	}
-	for _, controller := range controllers {
-		err = ProcessLegacyController(controller)
+	return controllers, nil
+}
+
+func ConvertControllerWorker(offset int) {
+	for i := 0; true; i++ {
+		page := (i * WorkerCount) + offset
+		controllers, err := LoadLegacyControllerPage(page)
 		if err != nil {
-			print(err.Error())
+			println(fmt.Sprintf("Error in worker %d: %s", offset, err))
+		}
+		if len(controllers) == 0 {
+			println(fmt.Sprintf("Worker %d fetched no controllers on page %d", offset, page))
+			break
+		}
+		for _, controller := range controllers {
+			err = ProcessLegacyController(controller)
+			if err != nil {
+				println(fmt.Sprintf("Error while processing CID %d: %s", controller.CID, err.Error()))
+			}
 		}
 	}
+	println(fmt.Sprintf("Worker %d finished", offset))
+}
+
+func ConvertControllers() error {
+	async.SpawnWorkers(WorkerCount, ConvertControllerWorker)
 	return nil
 }

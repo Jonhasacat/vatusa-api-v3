@@ -21,12 +21,18 @@ func ChangeRating(c *database.Controller, rating Rating, requester *database.Con
 		// TODO: Change rating via VATSIM API
 	}
 	c.ATCRating = int(rating)
+	var requesterID uint64
+	if requester != nil {
+		requesterID = requester.Id
+	} else {
+		requesterID = 0
+	}
 
 	ratingChange := database.RatingChange{
 		ControllerID: c.CertificateId,
 		FromRating:   c.ATCRating,
 		ToRating:     int(rating),
-		AdminID:      requester.Id,
+		AdminID:      requesterID,
 	}
 	database.DB.Create(&ratingChange)
 	c.Save()

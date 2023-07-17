@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"github.com/VATUSA/api-v3/pkg/controller"
 	db "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/role"
 	"github.com/labstack/echo/v4"
 )
 
@@ -20,7 +20,7 @@ func IsStaff(c echo.Context) bool {
 		return false
 	}
 	controllerModel := c.Get(FieldController).(db.Controller)
-	return controller.IsStaff(&controllerModel, controllerModel.Facility)
+	return role.IsStaff(&controllerModel, controllerModel.Facility)
 }
 
 func IsSeniorStaff(c echo.Context) bool {
@@ -28,21 +28,21 @@ func IsSeniorStaff(c echo.Context) bool {
 		return false
 	}
 	controllerModel := c.Get(FieldController).(db.Controller)
-	return controller.IsSeniorStaff(&controllerModel, controllerModel.Facility)
+	return role.IsSeniorStaff(&controllerModel, controllerModel.Facility)
 }
 func IsFacilityStaff(c echo.Context, facility facility.Facility) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
 	controllerModel := c.Get(FieldController).(db.Controller)
-	return controller.IsStaff(&controllerModel, facility)
+	return role.IsStaff(&controllerModel, facility)
 }
 func IsFacilityTrainingStaff(c echo.Context, facility facility.Facility) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
 	controllerModel := c.Get(FieldController).(db.Controller)
-	return controller.IsTrainingStaff(&controllerModel, facility)
+	return role.IsTrainingStaff(&controllerModel, facility)
 }
 
 func IsFacilityInstructor(c echo.Context, facility facility.Facility) bool {
@@ -50,7 +50,7 @@ func IsFacilityInstructor(c echo.Context, facility facility.Facility) bool {
 		return false
 	}
 	controllerModel := c.Get(FieldController).(db.Controller)
-	return controller.IsInstructor(&controllerModel, facility)
+	return role.IsInstructor(&controllerModel, facility)
 }
 
 func IsFacilitySeniorStaff(c echo.Context, facility facility.Facility) bool {
@@ -58,7 +58,7 @@ func IsFacilitySeniorStaff(c echo.Context, facility facility.Facility) bool {
 		return false
 	}
 	controllerModel := c.Get(FieldController).(db.Controller)
-	return controller.IsSeniorStaff(&controllerModel, facility)
+	return role.IsSeniorStaff(&controllerModel, facility)
 }
 
 func IsFacilityATMOrDATM(c echo.Context, facility facility.Facility) bool {
@@ -66,7 +66,7 @@ func IsFacilityATMOrDATM(c echo.Context, facility facility.Facility) bool {
 		return false
 	}
 	controllerModel := c.Get(FieldController).(db.Controller)
-	return controller.IsATMOrDATM(&controllerModel, facility)
+	return role.IsATMOrDATM(&controllerModel, facility)
 }
 
 func IsFacilityToken(c echo.Context, facility facility.Facility) bool {

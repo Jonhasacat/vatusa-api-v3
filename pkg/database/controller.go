@@ -81,7 +81,11 @@ func (c *Controller) HookControllerUpdate() {
 
 }
 
-func (c *Controller) Save() {
-	DB.Save(c)
+func (c *Controller) Save() error {
+	result := DB.Save(c)
+	if result.Error != nil {
+		return result.Error
+	}
 	c.HookControllerUpdate()
+	return nil
 }

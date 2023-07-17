@@ -30,7 +30,10 @@ func FetchCertificateByID(id uint64) (*Certificate, error) {
 	return model, nil
 }
 
-func (c *Certificate) Save() {
-	DB.Save(c)
-	// TODO: controller.HookControllerUpdate()
+func (c *Certificate) Save() error {
+	result := DB.Save(c)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

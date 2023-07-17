@@ -1,6 +1,6 @@
 package rating
 
-type Rating int
+type Rating = int
 
 const (
 	Inactive      Rating = -1

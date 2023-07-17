@@ -1,35 +1,40 @@
 package main
 
 import (
-	conversion2 "github.com/VATUSA/api-v3/internal/conversion"
+	"github.com/VATUSA/api-v3/internal/conversion"
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
-	database2 "github.com/VATUSA/api-v3/pkg/database"
+	db "github.com/VATUSA/api-v3/pkg/database"
 )
 
 func main() {
-	err := database2.Connect()
+	err := db.Connect()
 	if err != nil {
-		print(err)
+		println(err)
 		return
 	}
-	err = database2.MigrateDB()
+	err = db.MigrateDB()
 	if err != nil {
-		print(err)
+		println(err)
 		return
 	}
 	err = legacydb.Connect()
 	if err != nil {
-		print(err)
+		println(err)
 		return
 	}
-	err = conversion2.ConvertControllers()
+	err = conversion.ConvertControllers()
 	if err != nil {
-		print(err)
+		println(err)
 		return
 	}
-	err = conversion2.ConvertVisits()
+	err = conversion.ConvertVisits()
 	if err != nil {
-		print(err)
+		println(err)
+		return
+	}
+	err = conversion.ConvertRoles()
+	if err != nil {
+		println(err)
 		return
 	}
 }

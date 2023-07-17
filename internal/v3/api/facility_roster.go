@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"github.com/VATUSA/api-v3/pkg/auth"
-	"github.com/VATUSA/api-v3/pkg/controller"
 	db "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/datamodel/response"
 	"github.com/VATUSA/api-v3/pkg/facility"
@@ -75,12 +74,12 @@ func RemoveFromRoster(c echo.Context) error {
 	}
 	if controllerModel.Facility == fac {
 		// Home Removal
-		err := controller.RemoveFromFacility(controllerModel, requester, request.Reason)
+		err := roster.RemoveFromFacility(controllerModel, requester, request.Reason)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
-	} else if controller.IsVisiting(controllerModel, fac) {
-		err := controller.RemoveVisitor(controllerModel, fac, requester, request.Reason)
+	} else if roster.IsVisiting(controllerModel, fac) {
+		err := roster.RemoveVisitor(controllerModel, fac, requester, request.Reason)
 		if err != nil {
 
 		}
@@ -131,12 +130,12 @@ func ProcessRosterRequest(c echo.Context) error {
 		return err
 	}
 	if request.Accept {
-		err := controller.AcceptRosterRequest(record, request.Reason, requester)
+		err := roster.AcceptRosterRequest(record, request.Reason, requester)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
 	} else {
-		err := controller.RejectRosterRequest(record, request.Reason, requester)
+		err := roster.RejectRosterRequest(record, request.Reason, requester)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err)
 		}

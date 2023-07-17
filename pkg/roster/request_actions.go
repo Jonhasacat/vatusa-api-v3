@@ -1,19 +1,18 @@
-package controller
+package roster
 
 import (
 	"errors"
 	"fmt"
 	"github.com/VATUSA/api-v3/pkg/database"
-	"github.com/VATUSA/api-v3/pkg/roster"
 	"time"
 )
 
 func AcceptRosterRequest(request *database.ControllerRosterRequest, reason *string, requester *database.Controller) error {
-	if request.Status != roster.StatusPending {
+	if request.Status != StatusPending {
 		return errors.New(fmt.Sprintf("ControllerRosterRequest %d is not pending", request.ID))
 	}
 	now := time.Now()
-	request.Status = roster.StatusAccepted
+	request.Status = StatusAccepted
 	request.StatusReason = reason
 	request.AdminID = requester.Id
 
@@ -35,13 +34,13 @@ func AcceptRosterRequest(request *database.ControllerRosterRequest, reason *stri
 }
 
 func RejectRosterRequest(request *database.ControllerRosterRequest, reason *string, requester *database.Controller) error {
-	if request.Status != roster.StatusPending {
+	if request.Status != StatusPending {
 		return errors.New(fmt.Sprintf("ControllerRosterRequest %d is not pending", request.ID))
 	}
 	if reason == nil {
 		return errors.New("reason is required to reject a request")
 	}
-	request.Status = roster.StatusAccepted
+	request.Status = StatusAccepted
 	request.StatusReason = reason
 	request.AdminID = requester.Id
 	database.DB.Save(request)

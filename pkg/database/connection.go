@@ -6,6 +6,10 @@ import (
 	"github.com/VATUSA/api-v3/pkg/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
+	"os"
+	"time"
 )
 
 var DB *gorm.DB
@@ -16,6 +20,16 @@ func DSN(c *config.DatabaseConfig) (string, error) {
 }
 
 func Connect() error {
+	dbLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             3 * time.Second, // Slow SQL threshold
+			LogLevel:                  logger.Warn,     // Log level
+			IgnoreRecordNotFoundError: true,            // Ignore ErrRecordNotFound error for logger
+			ParameterizedQueries:      true,            // Don't include params in the SQL log
+			Colorful:                  true,            // Disable color
+		},
+	)
 	dsn, err := DSN(&config.PrimaryDatabaseConfig)
 	if err != nil {
 		return err
@@ -24,7 +38,12 @@ func Connect() error {
 	if err != nil {
 		return err
 	}
-	DB, err = gorm.Open(mysql.New(mysql.Config{Conn: conn}), &gorm.Config{})
+	DB, err = gorm.Open(mysql.New(mysql.Config{Conn: conn}), &gorm.Config{
+		Logger: dbLogger,
+	})
+	mysqlDB, err := DB.DB()
+	mysqlDB.SetMaxIdleConns(10)
+	mysqlDB.SetMaxOpenConns(100)
 	if err != nil {
 		return err
 	}

@@ -2,10 +2,10 @@ package api
 
 import (
 	"fmt"
-	"github.com/VATUSA/api-v3/pkg/controller"
 	database2 "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/datamodel/response"
 	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/roster"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
@@ -43,7 +43,7 @@ func CreateTrainingRecord(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if !controller.IsOnFacilityRoster(student, request.Facility) {
+	if !roster.IsOnFacilityRoster(student, request.Facility) {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.StudentCID, request.Facility))
 	}
@@ -51,7 +51,7 @@ func CreateTrainingRecord(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if !controller.IsOnFacilityRoster(instructor, request.Facility) {
+	if !roster.IsOnFacilityRoster(instructor, request.Facility) {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.InstructorCID, request.Facility))
 	}
@@ -94,7 +94,7 @@ func ModifyTrainingRecord(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if !controller.IsOnFacilityRoster(student, request.Facility) {
+	if !roster.IsOnFacilityRoster(student, request.Facility) {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.StudentCID, request.Facility))
 	}
@@ -102,7 +102,7 @@ func ModifyTrainingRecord(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if !controller.IsOnFacilityRoster(instructor, request.Facility) {
+	if !roster.IsOnFacilityRoster(instructor, request.Facility) {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.InstructorCID, request.Facility))
 	}
