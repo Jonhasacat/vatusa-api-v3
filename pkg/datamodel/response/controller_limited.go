@@ -1,9 +1,9 @@
 package response
 
 import (
-	"github.com/VATUSA/api-v3/pkg/controller"
+	"github.com/VATUSA/api-v3/internal/core"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"github.com/VATUSA/api-v3/pkg/database"
-	"github.com/VATUSA/api-v3/pkg/rating"
 	"time"
 )
 
@@ -24,16 +24,16 @@ type ControllerLimited struct {
 func MakeControllerLimited(c *database.Controller) *ControllerLimited {
 	model := &ControllerLimited{
 		CertificateID: c.CertificateId,
-		DisplayName:   controller.DisplayName(c),
+		DisplayName:   core.DisplayName(c),
 		VATSIMRating: ControllerRating{
 			Value: c.Certificate.Rating,
-			Short: rating.ShortMap[rating.Rating(c.Certificate.Rating)],
-			Long:  rating.LongMap[rating.Rating(c.Certificate.Rating)],
+			Short: constants.ShortMap[constants.Rating(c.Certificate.Rating)],
+			Long:  constants.LongMap[constants.Rating(c.Certificate.Rating)],
 		},
 		ATCRating: ControllerRating{
 			Value: c.ATCRating,
-			Short: rating.ShortMap[rating.Rating(c.ATCRating)],
-			Long:  rating.LongMap[rating.Rating(c.ATCRating)],
+			Short: constants.ShortMap[constants.Rating(c.ATCRating)],
+			Long:  constants.LongMap[constants.Rating(c.ATCRating)],
 		},
 		Facility:      c.Facility,
 		FacilityJoin:  c.FacilityJoin,

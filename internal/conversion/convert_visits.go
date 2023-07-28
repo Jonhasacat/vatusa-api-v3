@@ -2,9 +2,9 @@ package conversion
 
 import (
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
+	"github.com/VATUSA/api-v3/internal/core"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	db "github.com/VATUSA/api-v3/pkg/database"
-	"github.com/VATUSA/api-v3/pkg/facility"
-	"github.com/VATUSA/api-v3/pkg/roster"
 	"gorm.io/gorm"
 )
 
@@ -22,7 +22,7 @@ func ProcessLegacyVisit(legacy legacydb.Visit) error {
 	if err != nil {
 		return err
 	}
-	if !roster.IsVisiting(c, facility.Facility(legacy.Facility)) {
+	if !core.IsVisiting(c, constants.Facility(legacy.Facility)) {
 		visit := db.ControllerVisit{
 			Model: gorm.Model{
 				CreatedAt: legacy.CreatedAt,
@@ -30,7 +30,7 @@ func ProcessLegacyVisit(legacy legacydb.Visit) error {
 			},
 			ControllerID: c.Id,
 			Controller:   c,
-			Facility:     facility.Facility(legacy.Facility),
+			Facility:     constants.Facility(legacy.Facility),
 		}
 		visit.Save()
 	}

@@ -2,8 +2,8 @@ package conversion
 
 import (
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
+	"github.com/VATUSA/api-v3/internal/core"
 	db "github.com/VATUSA/api-v3/pkg/database"
-	"github.com/VATUSA/api-v3/pkg/role"
 )
 
 func LoadLegacyRoles() ([]legacydb.Role, error) {
@@ -20,7 +20,7 @@ func ProcessLegacyRole(legacyRole legacydb.Role) error {
 	if err != nil {
 		return err
 	}
-	if !role.HasRole(c, legacyRole.Role, legacyRole.Facility) {
+	if !core.HasRole(c, legacyRole.Role, legacyRole.Facility) {
 		record := &db.ControllerRole{
 			ControllerID: c.Id,
 			Controller:   *c,

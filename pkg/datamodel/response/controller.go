@@ -1,9 +1,9 @@
 package response
 
 import (
-	"github.com/VATUSA/api-v3/pkg/controller"
+	"github.com/VATUSA/api-v3/internal/core"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"github.com/VATUSA/api-v3/pkg/database"
-	"github.com/VATUSA/api-v3/pkg/rating"
 	"time"
 )
 
@@ -29,29 +29,29 @@ type Controller struct {
 }
 
 func MakeController(c *database.Controller) *Controller {
-	certificateName := controller.CertificateName(c)
+	certificateName := core.CertificateName(c)
 	model := &Controller{
 		CertificateID:   c.CertificateId,
 		CertificateName: &certificateName,
-		DisplayName:     controller.DisplayName(c),
+		DisplayName:     core.DisplayName(c),
 		Email:           &c.Certificate.Email,
 		VATSIMRating: ControllerRating{
 			Value: c.Certificate.Rating,
-			Short: rating.ShortMap[rating.Rating(c.Certificate.Rating)],
-			Long:  rating.LongMap[rating.Rating(c.Certificate.Rating)],
+			Short: constants.ShortMap[constants.Rating(c.Certificate.Rating)],
+			Long:  constants.LongMap[constants.Rating(c.Certificate.Rating)],
 		},
 		ATCRating: ControllerRating{
 			Value: c.ATCRating,
-			Short: rating.ShortMap[rating.Rating(c.ATCRating)],
-			Long:  rating.LongMap[rating.Rating(c.ATCRating)],
+			Short: constants.ShortMap[constants.Rating(c.ATCRating)],
+			Long:  constants.LongMap[constants.Rating(c.ATCRating)],
 		},
 		Facility:            c.Facility,
 		FacilityJoin:        c.FacilityJoin,
 		LastPromotion:       c.LastPromotion,
 		InDivision:          c.IsInDivision,
-		IsTransferEligible:  controller.IsTransferEligible(c),
-		IsVisitEligible:     controller.IsVisitEligible(c),
-		IsPromotionEligible: controller.IsPromotionEligible(c),
+		IsTransferEligible:  core.IsTransferEligible(c),
+		IsVisitEligible:     core.IsVisitEligible(c),
+		IsPromotionEligible: core.IsPromotionEligible(c),
 		DiscordId:           c.DiscordId,
 		RatingChanges:       []ControllerRatingChange{},
 		Transfers:           []ControllerTransfer{},

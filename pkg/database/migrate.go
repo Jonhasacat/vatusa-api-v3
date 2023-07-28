@@ -13,6 +13,7 @@ func MigrateDB() error {
 		&APIUser{},
 		&APIToken{},
 		&APITokenLog{},
+		&Transfer{},
 	)
 	if err != nil {
 		return err

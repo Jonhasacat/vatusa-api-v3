@@ -1,8 +1,8 @@
 package response
 
 import (
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"github.com/VATUSA/api-v3/pkg/database"
-	"github.com/VATUSA/api-v3/pkg/rating"
 	"time"
 )
 
@@ -17,13 +17,13 @@ func MakeControllerRatingChange(rc *database.RatingChange) *ControllerRatingChan
 	ratingChange := &ControllerRatingChange{
 		FromRating: ControllerRating{
 			Value: rc.FromRating,
-			Short: rating.ShortFromInt(rc.FromRating),
-			Long:  rating.LongFromInt(rc.FromRating),
+			Short: constants.ShortFromInt(rc.FromRating),
+			Long:  constants.LongFromInt(rc.FromRating),
 		},
 		ToRating: ControllerRating{
 			Value: rc.ToRating,
-			Short: rating.ShortFromInt(rc.ToRating),
-			Long:  rating.LongFromInt(rc.ToRating),
+			Short: constants.ShortFromInt(rc.ToRating),
+			Long:  constants.LongFromInt(rc.ToRating),
 		},
 		CreatedAt:    time.Time{},
 		RequesterCID: 0,

@@ -3,11 +3,10 @@ package conversion
 import (
 	"fmt"
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
+	"github.com/VATUSA/api-v3/internal/core"
 	"github.com/VATUSA/api-v3/pkg/async"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	db "github.com/VATUSA/api-v3/pkg/database"
-	"github.com/VATUSA/api-v3/pkg/facility"
-	"github.com/VATUSA/api-v3/pkg/rating"
-	"github.com/VATUSA/api-v3/pkg/role"
 	"time"
 )
 
@@ -60,22 +59,54 @@ func ProcessLegacyController(legacy legacydb.Controller) error {
 
 	}
 	if controller.IsInDivision &&
-		facility.IsRosterFacility(controller.Facility) &&
-		(controller.ATCRating == rating.I1 || controller.ATCRating == rating.I3) {
-		if !role.HasRole(controller, role.Instructor, controller.Facility) {
-			err := role.AddRole(controller, role.Instructor, controller.Facility, nil)
+		constants.IsRosterFacility(controller.Facility) &&
+		(controller.ATCRating == constants.I1 || controller.ATCRating == constants.I3) {
+		if !core.HasRole(controller, constants.Instructor, controller.Facility) {
+			err := core.AddRole(controller, constants.Instructor, controller.Facility, nil)
 			if err != nil {
 				return err
 			}
 		}
 	}
-	if controller.ATCRating < rating.Observer || controller.ATCRating > rating.I3 {
-		if controller.ATCRating > rating.I3 && role.HasRole(controller, role.TrainingAdministrator, controller.Facility) {
-			controller.ATCRating = rating.I3
-		} else if controller.ATCRating > rating.I3 && role.HasRole(controller, role.Instructor, controller.Facility) {
-			controller.ATCRating = rating.I1
+	if controller.ATCRating < constants.Observer || controller.ATCRating > constants.I3 {
+		if controller.ATCRating > constants.I3 && core.HasRole(controller, constants.TrainingAdministrator, controller.Facility) {
+			controller.ATCRating = constants.I3
+		} else if controller.ATCRating > constants.I3 && core.HasRole(controller, constants.Instructor, controller.Facility) {
+			controller.ATCRating = constants.I1
+		}
+		legacyPromotions, err := LoadLegacyPromotionsByCID(controller.Id)
+		if err != nil {
+			return err
+		}
+		if len(legacyPromotions) == 0 {
+			controller.ATCRating = constants.Observer
+			// This assumption isn't guaranteed
+			// it is possible that someone promoted prior to ~2008 will be set as OBS and need to be corrected
+		} else {
+			var lastPromotion *legacydb.Promotion
+			// Has Legacy Promotions
+			for _, p := range legacyPromotions {
+				if lastPromotion == nil || p.CreatedAt.After(lastPromotion.CreatedAt) {
+					lastPromotion = &p
+				}
+			}
+			controller.ATCRating = lastPromotion.ToRating
+		}
+		if certificate.Rating == constants.Administrator && controller.ATCRating == constants.Observer {
+			// Assume ADM are actually C1, if we don't have any other history
+			controller.ATCRating = constants.C1
+		}
+		if certificate.Rating == constants.Inactive && controller.ATCRating > constants.C3 {
+			err := core.ChangeRating(controller, constants.C1, nil)
+			if err != nil {
+				return err
+			}
 		}
 		// TODO: Determine which ATCRating they should be
+	}
+	err := controller.Save()
+	if err != nil {
+		return err
 	}
 	return nil
 }

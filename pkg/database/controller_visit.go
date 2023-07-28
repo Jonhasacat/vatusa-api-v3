@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"gorm.io/gorm"
 )
 
@@ -9,7 +9,7 @@ type ControllerVisit struct {
 	gorm.Model
 	ControllerID uint64
 	Controller   *Controller
-	Facility     facility.Facility
+	Facility     constants.Facility
 }
 
 func (c *ControllerVisit) Save() {

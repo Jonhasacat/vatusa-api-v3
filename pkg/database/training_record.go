@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
-	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"gorm.io/gorm"
 	"time"
 )
@@ -15,7 +15,7 @@ type TrainingRecord struct {
 	InstructorCID       uint64
 	Instructor          *Controller
 	SessionTime         time.Time
-	Facility            facility.Facility
+	Facility            constants.Facility
 	Position            string
 	DurationMinutes     uint64
 	AircraftMovements   uint64

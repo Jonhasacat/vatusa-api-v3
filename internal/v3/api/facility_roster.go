@@ -2,11 +2,11 @@ package api
 
 import (
 	"fmt"
+	"github.com/VATUSA/api-v3/internal/core"
 	"github.com/VATUSA/api-v3/pkg/auth"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	db "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/datamodel/response"
-	"github.com/VATUSA/api-v3/pkg/facility"
-	"github.com/VATUSA/api-v3/pkg/roster"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -20,7 +20,7 @@ import (
 //	@Success	200	{array}		response.Controller
 //	@Failure	400	{object}	response.ErrorMessage
 func GetFacilityRoster(c echo.Context) error {
-	fac := facility.Facility(c.Param("facility"))
+	fac := constants.Facility(c.Param("facility"))
 	controllers, err := db.FetchControllersByHomeFacility(fac)
 	visitors, err := db.FetchControllersByVisitingFacility(fac)
 	controllers = append(controllers, visitors...)
@@ -55,7 +55,7 @@ type RemoveFromRosterRequest struct {
 }
 
 func RemoveFromRoster(c echo.Context) error {
-	fac := facility.Facility(c.Param("facility"))
+	fac := constants.Facility(c.Param("facility"))
 	var request RemoveFromRosterRequest
 	err := c.Bind(&request)
 	if err != nil {
@@ -74,12 +74,12 @@ func RemoveFromRoster(c echo.Context) error {
 	}
 	if controllerModel.Facility == fac {
 		// Home Removal
-		err := roster.RemoveFromFacility(controllerModel, requester, request.Reason)
+		err := core.RemoveFromFacility(controllerModel, requester, request.Reason)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
-	} else if roster.IsVisiting(controllerModel, fac) {
-		err := roster.RemoveVisitor(controllerModel, fac, requester, request.Reason)
+	} else if core.IsVisiting(controllerModel, fac) {
+		err := core.RemoveVisitor(controllerModel, fac, requester, request.Reason)
 		if err != nil {
 
 		}
@@ -111,14 +111,14 @@ type ProcessRosterRequestRequest struct {
 }
 
 func ProcessRosterRequest(c echo.Context) error {
-	fac := facility.Facility(c.Param("facility"))
+	fac := constants.Facility(c.Param("facility"))
 	var request ProcessRosterRequestRequest
 	err := c.Bind(&request)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Payload is incorrectly formatted")
 	}
 	record, err := db.FetchRequestById(request.ID)
-	if record.Status != roster.StatusPending {
+	if record.Status != constants.StatusPending {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Roster Request %d is not Pending", request.ID))
 	}
 	if record.Facility != fac {
@@ -130,12 +130,12 @@ func ProcessRosterRequest(c echo.Context) error {
 		return err
 	}
 	if request.Accept {
-		err := roster.AcceptRosterRequest(record, request.Reason, requester)
+		err := core.AcceptRosterRequest(record, request.Reason, requester)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
 	} else {
-		err := roster.RejectRosterRequest(record, request.Reason, requester)
+		err := core.RejectRosterRequest(record, request.Reason, requester)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err)
 		}

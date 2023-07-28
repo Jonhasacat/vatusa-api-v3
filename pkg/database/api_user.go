@@ -1,17 +1,17 @@
 package database
 
 import (
-	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"gorm.io/gorm"
 )
 
 type APIUser struct {
 	gorm.Model
 	Name     string
-	Facility facility.Facility
+	Facility constants.Facility
 }
 
-func CreateAPIUser(name string, facility facility.Facility) (*APIUser, error) {
+func CreateAPIUser(name string, facility constants.Facility) (*APIUser, error) {
 	user := APIUser{
 		Name:     name,
 		Facility: facility,

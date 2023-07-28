@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/VATUSA/api-v3/pkg/certificate"
+	"github.com/VATUSA/api-v3/internal/core"
 	"github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/vatsim"
 	"gorm.io/gorm"
@@ -63,12 +63,12 @@ func ProcessMember(member vatsim.Member) error {
 		return err
 	}
 	if cert != nil {
-		err := certificate.UpdateCertificate(cert, &member)
+		err := core.UpdateCertificate(cert, &member)
 		if err != nil {
 			return err
 		}
 	} else {
-		err := certificate.CreateCertificate(&member)
+		err := core.CreateCertificate(&member)
 		if err != nil {
 			return err
 		}

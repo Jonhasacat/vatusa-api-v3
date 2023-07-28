@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
-	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"gorm.io/gorm"
 )
 
@@ -11,7 +11,7 @@ type ControllerRosterRequest struct {
 	gorm.Model
 	ControllerID uint64
 	Controller   *Controller
-	Facility     facility.Facility
+	Facility     constants.Facility
 	RequestType  string // constants.RequestTransfer or constants.RequestVisit
 	Reason       string
 	RequesterID  uint64

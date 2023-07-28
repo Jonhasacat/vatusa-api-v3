@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/VATUSA/api-v3/pkg/facility"
+	"github.com/VATUSA/api-v3/pkg/constants"
 	"gorm.io/gorm"
 	"time"
 )
@@ -45,7 +45,7 @@ func FetchControllerByCID(cid uint64) (*Controller, error) {
 	return model, nil
 }
 
-func FetchControllersByHomeFacility(facility facility.Facility) ([]Controller, error) {
+func FetchControllersByHomeFacility(facility constants.Facility) ([]Controller, error) {
 	var controllers []Controller
 	result := controllerQuery().
 		Where("facility = ?", facility).
@@ -56,7 +56,7 @@ func FetchControllersByHomeFacility(facility facility.Facility) ([]Controller, e
 	return controllers, nil
 }
 
-func FetchControllersByVisitingFacility(facility facility.Facility) ([]Controller, error) {
+func FetchControllersByVisitingFacility(facility constants.Facility) ([]Controller, error) {
 	var visits []ControllerVisit
 	visitResult := DB.Model(&ControllerVisit{}).
 		Where("facility = ?", facility).

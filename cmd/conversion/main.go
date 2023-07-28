@@ -37,4 +37,9 @@ func main() {
 		println(err)
 		return
 	}
+	err = conversion.ConvertPromotions()
+	if err != nil {
+		println(err)
+		return
+	}
 }
