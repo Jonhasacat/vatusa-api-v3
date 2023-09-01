@@ -1,8 +1,8 @@
 package core
 
 import (
+	db "github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	db "github.com/VATUSA/api-v3/pkg/database"
 )
 
 func HasRole(c *db.Controller, role constants.Role, facility constants.Facility) bool {

@@ -19,7 +19,7 @@ const (
 	Administrator Rating = 12
 )
 
-var ShortMap = map[Rating]string{
+var RatingShortMap = map[Rating]string{
 	Inactive:      "AFK",
 	Suspended:     "SUS",
 	Observer:      "OBS",
@@ -36,7 +36,7 @@ var ShortMap = map[Rating]string{
 	Administrator: "ADM",
 }
 
-var LongMap = map[Rating]string{
+var RatingLongMap = map[Rating]string{
 	Inactive:      "Inactive",
 	Suspended:     "Suspended",
 	Observer:      "Observer",
@@ -53,18 +53,10 @@ var LongMap = map[Rating]string{
 	Administrator: "Administrator",
 }
 
-func Short(rating Rating) string {
-	return ShortMap[rating]
+func RatingShort(rating Rating) string {
+	return RatingShortMap[rating]
 }
 
-func ShortFromInt(rating int) string {
-	return ShortMap[rating]
-}
-
-func Long(rating Rating) string {
-	return LongMap[rating]
-}
-
-func LongFromInt(rating int) string {
-	return LongMap[rating]
+func RatingLong(rating Rating) string {
+	return RatingLongMap[rating]
 }

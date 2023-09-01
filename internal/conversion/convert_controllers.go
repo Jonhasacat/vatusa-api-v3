@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
 	"github.com/VATUSA/api-v3/internal/core"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/async"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	db "github.com/VATUSA/api-v3/pkg/database"
 	"time"
 )
 
@@ -16,9 +16,9 @@ const (
 )
 
 func ProcessLegacyController(legacy legacydb.Controller) error {
-	certificate, _ := db.FetchCertificateByID(legacy.CID)
+	certificate, _ := database.FetchCertificateByID(legacy.CID)
 	if certificate == nil {
-		certificate = &db.Certificate{
+		certificate = &database.Certificate{
 			ID:                     legacy.CID,
 			FirstName:              legacy.FName,
 			LastName:               legacy.LName,
@@ -39,9 +39,9 @@ func ProcessLegacyController(legacy legacydb.Controller) error {
 			return err
 		}
 	}
-	controller, _ := db.FetchControllerByCID(legacy.CID)
+	controller, _ := database.FetchControllerByCID(legacy.CID)
 	if controller == nil {
-		controller = &db.Controller{
+		controller = &database.Controller{
 			Id:                        legacy.CID,
 			CertificateId:             legacy.CID,
 			Certificate:               certificate,
@@ -54,10 +54,29 @@ func ProcessLegacyController(legacy legacydb.Controller) error {
 			IsActive:                  false,
 			DiscordId:                 legacy.DiscordId,
 		}
-		db.DB.Create(&controller)
+		database.DB.Create(&controller)
 	} else {
 
 	}
+
+	controller.IsActive = controller.Certificate.Rating >= constants.Observer
+
+	legacyPromotions, err := LoadLegacyPromotionsByCID(controller.Id)
+	if err != nil {
+		return err
+	}
+	var lastPromotion *legacydb.Promotion
+	// Has Legacy Promotions
+	for _, p := range legacyPromotions {
+		if lastPromotion == nil || p.CreatedAt.After(lastPromotion.CreatedAt) {
+			lastPromotion = &p
+		}
+	}
+
+	if lastPromotion != nil {
+		controller.LastPromotion = &lastPromotion.CreatedAt
+	}
+
 	if controller.IsInDivision &&
 		constants.IsRosterFacility(controller.Facility) &&
 		(controller.ATCRating == constants.I1 || controller.ATCRating == constants.I3) {
@@ -74,22 +93,11 @@ func ProcessLegacyController(legacy legacydb.Controller) error {
 		} else if controller.ATCRating > constants.I3 && core.HasRole(controller, constants.Instructor, controller.Facility) {
 			controller.ATCRating = constants.I1
 		}
-		legacyPromotions, err := LoadLegacyPromotionsByCID(controller.Id)
-		if err != nil {
-			return err
-		}
 		if len(legacyPromotions) == 0 {
 			controller.ATCRating = constants.Observer
 			// This assumption isn't guaranteed
 			// it is possible that someone promoted prior to ~2008 will be set as OBS and need to be corrected
 		} else {
-			var lastPromotion *legacydb.Promotion
-			// Has Legacy Promotions
-			for _, p := range legacyPromotions {
-				if lastPromotion == nil || p.CreatedAt.After(lastPromotion.CreatedAt) {
-					lastPromotion = &p
-				}
-			}
 			controller.ATCRating = lastPromotion.ToRating
 		}
 		if certificate.Rating == constants.Administrator && controller.ATCRating == constants.Observer {
@@ -104,7 +112,7 @@ func ProcessLegacyController(legacy legacydb.Controller) error {
 		}
 		// TODO: Determine which ATCRating they should be
 	}
-	err := controller.Save()
+	err = controller.Save()
 	if err != nil {
 		return err
 	}

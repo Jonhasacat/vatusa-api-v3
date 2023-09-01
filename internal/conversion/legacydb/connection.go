@@ -3,7 +3,7 @@ package legacydb
 import (
 	"database/sql"
 	"fmt"
-	"github.com/VATUSA/api-v3/pkg/config"
+	"github.com/VATUSA/api-v3/internal/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

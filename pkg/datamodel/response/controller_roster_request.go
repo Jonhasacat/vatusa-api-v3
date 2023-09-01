@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/database"
 )
 
 type ControllerRosterRequest struct {

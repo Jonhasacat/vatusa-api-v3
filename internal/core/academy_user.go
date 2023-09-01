@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
+	db "github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	db "github.com/VATUSA/api-v3/pkg/database"
 )
 
 func CreateAcademyUser(au *db.AcademyUser) error {
@@ -122,9 +122,9 @@ func SyncCohorts(a *db.AcademyUser) error {
 		cohorts = append(cohorts, "C1+")
 		cohorts = append(cohorts, fmt.Sprintf("%s-C1+", a.Controller.Facility))
 	} else {
-		cohorts = append(cohorts, constants.ShortFromInt(a.Controller.ATCRating))
+		cohorts = append(cohorts, constants.RatingShort(a.Controller.ATCRating))
 		cohorts = append(cohorts, fmt.Sprintf(
-			"%s-%s", a.Controller.Facility, constants.ShortFromInt(a.Controller.ATCRating)))
+			"%s-%s", a.Controller.Facility, constants.RatingShort(a.Controller.ATCRating)))
 	}
 
 	return setUserCohorts(a, cohorts)

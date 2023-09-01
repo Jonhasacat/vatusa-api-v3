@@ -1,16 +1,16 @@
 package main
 
 import (
+	"github.com/VATUSA/api-v3/internal/database"
 	v3 "github.com/VATUSA/api-v3/internal/v3/api"
-	database2 "github.com/VATUSA/api-v3/pkg/database"
 )
 
 func main() {
-	err := database2.Connect()
+	err := database.Connect()
 	if err != nil {
 		return
 	}
-	err = database2.MigrateDB()
+	err = database.MigrateDB()
 	if err != nil {
 		return
 	}

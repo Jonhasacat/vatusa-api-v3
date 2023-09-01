@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 	"github.com/VATUSA/api-v3/internal/core"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	database2 "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/datamodel/response"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -39,7 +39,7 @@ func CreateTrainingRecord(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			"SoloCertPosition must be specified when IsSoloCertGranted = true")
 	}
-	student, err := database2.FetchControllerByCID(request.StudentCID)
+	student, err := database.FetchControllerByCID(request.StudentCID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -47,7 +47,7 @@ func CreateTrainingRecord(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.StudentCID, request.Facility))
 	}
-	instructor, err := database2.FetchControllerByCID(request.InstructorCID)
+	instructor, err := database.FetchControllerByCID(request.InstructorCID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -55,7 +55,7 @@ func CreateTrainingRecord(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.InstructorCID, request.Facility))
 	}
-	record := database2.TrainingRecord{
+	record := database.TrainingRecord{
 		StudentCID:          request.StudentCID,
 		Student:             student,
 		InstructorCID:       request.InstructorCID,
@@ -90,7 +90,7 @@ func ModifyTrainingRecord(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			"SoloCertPosition must be specified when IsSoloCertGranted = true")
 	}
-	student, err := database2.FetchControllerByCID(request.StudentCID)
+	student, err := database.FetchControllerByCID(request.StudentCID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -98,7 +98,7 @@ func ModifyTrainingRecord(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.StudentCID, request.Facility))
 	}
-	instructor, err := database2.FetchControllerByCID(request.InstructorCID)
+	instructor, err := database.FetchControllerByCID(request.InstructorCID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -106,7 +106,7 @@ func ModifyTrainingRecord(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest,
 			fmt.Sprintf("Controller %d is not on the %s roster", request.InstructorCID, request.Facility))
 	}
-	record, err := database2.FetchTrainingRecordByID(id)
+	record, err := database.FetchTrainingRecordByID(id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -135,7 +135,7 @@ func DeleteTrainingRecord(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	record, err := database2.FetchTrainingRecordByID(id)
+	record, err := database.FetchTrainingRecordByID(id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -149,7 +149,7 @@ func GetControllerTrainingRecords(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	records, err := database2.FetchTrainingRecordsByCID(cid)
+	records, err := database.FetchTrainingRecordsByCID(cid)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -162,7 +162,7 @@ func GetControllerTrainingRecords(c echo.Context) error {
 
 func GetFacilityTrainingRecords(c echo.Context) error {
 	facility := c.Param("facility")
-	records, err := database2.FetchTrainingRecordsByFacility(facility)
+	records, err := database.FetchTrainingRecordsByFacility(facility)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

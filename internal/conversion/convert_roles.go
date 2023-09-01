@@ -3,7 +3,7 @@ package conversion
 import (
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
 	"github.com/VATUSA/api-v3/internal/core"
-	db "github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/database"
 )
 
 func LoadLegacyRoles() ([]legacydb.Role, error) {
@@ -16,18 +16,18 @@ func LoadLegacyRoles() ([]legacydb.Role, error) {
 }
 
 func ProcessLegacyRole(legacyRole legacydb.Role) error {
-	c, err := db.FetchControllerByCID(legacyRole.CID)
+	c, err := database.FetchControllerByCID(legacyRole.CID)
 	if err != nil {
 		return err
 	}
 	if !core.HasRole(c, legacyRole.Role, legacyRole.Facility) {
-		record := &db.ControllerRole{
+		record := &database.ControllerRole{
 			ControllerID: c.Id,
 			Controller:   *c,
 			Role:         legacyRole.Role,
 			Facility:     legacyRole.Facility,
 		}
-		result := db.DB.Save(record)
+		result := database.DB.Save(record)
 		if result.Error != nil {
 			return result.Error
 		}

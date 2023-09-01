@@ -1,9 +1,9 @@
 package middleware
 
 import (
+	"github.com/VATUSA/api-v3/internal/config"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/auth"
-	"github.com/VATUSA/api-v3/pkg/config"
-	db "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strings"
@@ -13,7 +13,7 @@ func AuthContext(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		method := auth.NoAuth
 		cookie, err := c.Cookie(config.UserCookieName)
-		var controller *db.Controller
+		var controller *database.Controller
 		if cookie != nil {
 			method = auth.Controller
 			controller, err = auth.GetControllerForJWT(cookie.Value)
@@ -23,8 +23,8 @@ func AuthContext(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		header := c.Request().Header.Get("Authorization")
 		var token string
-		var apiToken *db.APIToken
-		var apiUser *db.APIUser
+		var apiToken *database.APIToken
+		var apiUser *database.APIUser
 		if header != "" {
 			fields := strings.Fields(header)
 			if len(fields) > 2 {
@@ -35,7 +35,7 @@ func AuthContext(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 			token = fields[1]
 			method = auth.APIUser
-			apiToken, err = db.FetchAPITokenByToken(token)
+			apiToken, err = database.FetchAPITokenByToken(token)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
 			}

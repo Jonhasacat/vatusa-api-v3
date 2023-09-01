@@ -3,7 +3,8 @@ package conversion
 import (
 	"fmt"
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
-	db "github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/database"
+	"gorm.io/gorm"
 )
 
 func LoadLegacyPromotions() ([]legacydb.Promotion, error) {
@@ -25,18 +26,21 @@ func LoadLegacyPromotionsByCID(cid uint64) ([]legacydb.Promotion, error) {
 }
 
 func ProcessLegacyPromotion(promotion legacydb.Promotion) error {
-	c, err := db.FetchControllerByCID(promotion.CID)
+	c, err := database.FetchControllerByCID(promotion.CID)
 	if err != nil {
 		return err
 	}
-	record := &db.RatingChange{
+	record := &database.RatingChange{
+		Model: gorm.Model{
+			ID: uint(promotion.ID),
+		},
 		ControllerID: c.Id,
 		Controller:   c,
 		FromRating:   promotion.FromRating,
 		ToRating:     promotion.ToRating,
 		AdminID:      promotion.Grantor,
 	}
-	result := db.DB.Save(record)
+	result := database.DB.Save(record)
 	if result.Error != nil {
 		return result.Error
 	}

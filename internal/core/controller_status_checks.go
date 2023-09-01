@@ -1,12 +1,12 @@
 package core
 
 import (
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	db "github.com/VATUSA/api-v3/pkg/database"
 	"time"
 )
 
-func IsTransferEligible(c *db.Controller) bool {
+func IsTransferEligible(c *database.Controller) bool {
 	if !c.IsInDivision {
 		return false
 	}
@@ -15,7 +15,7 @@ func IsTransferEligible(c *db.Controller) bool {
 	}
 	for _, h := range c.Holds {
 		if h.ExpiresAt.Before(time.Now()) {
-			db.DB.Delete(&h)
+			database.DB.Delete(&h)
 		} else {
 			holdMeta := constants.Get(h.Hold)
 			if holdMeta.PreventTransfer {
@@ -26,7 +26,7 @@ func IsTransferEligible(c *db.Controller) bool {
 	return true
 }
 
-func IsVisitEligible(c *db.Controller) bool {
+func IsVisitEligible(c *database.Controller) bool {
 	if !c.IsInDivision && !c.IsApprovedExternalVisitor {
 		return false
 	}
@@ -35,7 +35,7 @@ func IsVisitEligible(c *db.Controller) bool {
 	}
 	for _, h := range c.Holds {
 		if h.ExpiresAt.Before(time.Now()) {
-			db.DB.Delete(&h)
+			database.DB.Delete(&h)
 		} else {
 			holdMeta := constants.Get(h.Hold)
 			if holdMeta.PreventVisit {
@@ -46,16 +46,19 @@ func IsVisitEligible(c *db.Controller) bool {
 	return true
 }
 
-func IsPromotionEligible(c *db.Controller) bool {
+func IsPromotionEligible(c *database.Controller) bool {
 	if !c.IsInDivision {
 		return false
 	}
 	if !c.IsActive {
 		return false
 	}
+	if c.ATCRating >= constants.C1 {
+		return false
+	}
 	for _, h := range c.Holds {
 		if h.ExpiresAt.Before(time.Now()) {
-			db.DB.Delete(&h)
+			database.DB.Delete(&h)
 		} else {
 			holdMeta := constants.Get(h.Hold)
 			if holdMeta.PreventPromotion {

@@ -2,8 +2,8 @@ package response
 
 import (
 	"github.com/VATUSA/api-v3/internal/core"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	"github.com/VATUSA/api-v3/pkg/database"
 	"time"
 )
 
@@ -27,13 +27,13 @@ func MakeControllerLimited(c *database.Controller) *ControllerLimited {
 		DisplayName:   core.DisplayName(c),
 		VATSIMRating: ControllerRating{
 			Value: c.Certificate.Rating,
-			Short: constants.ShortMap[constants.Rating(c.Certificate.Rating)],
-			Long:  constants.LongMap[constants.Rating(c.Certificate.Rating)],
+			Short: constants.RatingShortMap[constants.Rating(c.Certificate.Rating)],
+			Long:  constants.RatingLongMap[constants.Rating(c.Certificate.Rating)],
 		},
 		ATCRating: ControllerRating{
 			Value: c.ATCRating,
-			Short: constants.ShortMap[constants.Rating(c.ATCRating)],
-			Long:  constants.LongMap[constants.Rating(c.ATCRating)],
+			Short: constants.RatingShortMap[constants.Rating(c.ATCRating)],
+			Long:  constants.RatingLongMap[constants.Rating(c.ATCRating)],
 		},
 		Facility:      c.Facility,
 		FacilityJoin:  c.FacilityJoin,

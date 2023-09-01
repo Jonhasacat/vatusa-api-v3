@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	db "github.com/VATUSA/api-v3/pkg/database"
+	db "github.com/VATUSA/api-v3/internal/database"
 )
 
 func CertificateName(c *db.Controller) string {

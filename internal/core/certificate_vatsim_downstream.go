@@ -2,14 +2,14 @@ package core
 
 import (
 	"errors"
-	db "github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/vatsim"
 	"gorm.io/gorm"
 	"time"
 )
 
 func CreateCertificate(member *vatsim.Member) error {
-	cert := &db.Certificate{
+	cert := &database.Certificate{
 		ID:                     member.ID,
 		FirstName:              *member.NameFirst,
 		LastName:               *member.NameLast,
@@ -25,11 +25,11 @@ func CreateCertificate(member *vatsim.Member) error {
 		LastRatingChange:       member.LastRatingChangeTime(),
 		CertificateUpdateStamp: time.Now(),
 	}
-	result := db.DB.Create(cert)
+	result := database.DB.Create(cert)
 	if result.Error != nil {
 		return result.Error
 	}
-	controller, err := db.FetchControllerByCID(cert.ID)
+	controller, err := database.FetchControllerByCID(cert.ID)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -39,7 +39,7 @@ func CreateCertificate(member *vatsim.Member) error {
 			return err
 		}
 	} else if member.Region == "AMAS" && member.Division == "USA" {
-		err = NewController(cert)
+		_, err = NewController(cert)
 		if err != nil {
 			return err
 		}
@@ -47,7 +47,7 @@ func CreateCertificate(member *vatsim.Member) error {
 	return nil
 }
 
-func UpdateCertificate(cert *db.Certificate, member *vatsim.Member) error {
+func UpdateCertificate(cert *database.Certificate, member *vatsim.Member) error {
 	if member.NameFirst != nil {
 		cert.FirstName = *member.NameFirst
 	}
@@ -71,7 +71,7 @@ func UpdateCertificate(cert *db.Certificate, member *vatsim.Member) error {
 	if err != nil {
 		return err
 	}
-	controller, err := db.FetchControllerByCID(cert.ID)
+	controller, err := database.FetchControllerByCID(cert.ID)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -81,7 +81,7 @@ func UpdateCertificate(cert *db.Certificate, member *vatsim.Member) error {
 			return err
 		}
 	} else if member.Region == "AMAS" && member.Division == "USA" {
-		err = NewController(cert)
+		_, err = NewController(cert)
 		if err != nil {
 			return err
 		}

@@ -3,11 +3,11 @@ package core
 import (
 	"errors"
 	"fmt"
+	database2 "github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	"github.com/VATUSA/api-v3/pkg/database"
 )
 
-func RequestTransfer(c *database.Controller, fac constants.Facility, reason string) error {
+func RequestTransfer(c *database2.Controller, fac constants.Facility, reason string) error {
 	if !IsTransferEligible(c) {
 		return errors.New(fmt.Sprintf("Controller %d is not eligible for transfer", c.CertificateId))
 	}
@@ -19,11 +19,11 @@ func RequestTransfer(c *database.Controller, fac constants.Facility, reason stri
 	return nil
 }
 
-func ForceTransfer(controller *database.Controller, fac constants.Facility, reason string) error {
+func ForceTransfer(controller *database2.Controller, fac constants.Facility, reason string) error {
 	if controller.Facility == fac {
 		return errors.New(fmt.Sprintf("controller %d is already in facility %s", controller.Id, fac))
 	}
-	transfer := &database.Transfer{
+	transfer := &database2.Transfer{
 		ControllerID: controller.Id,
 		Controller:   controller,
 		FromFacility: controller.Facility,
@@ -34,7 +34,7 @@ func ForceTransfer(controller *database.Controller, fac constants.Facility, reas
 	return nil
 }
 
-func RemoveFromFacility(controller *database.Controller, requester *database.Controller, reason string) error {
+func RemoveFromFacility(controller *database2.Controller, requester *database2.Controller, reason string) error {
 	if controller.Facility == constants.Academy ||
 		controller.Facility == constants.NonMember ||
 		controller.Facility == constants.InactiveFacility {
@@ -62,7 +62,7 @@ func RemoveFromFacility(controller *database.Controller, requester *database.Con
 	return nil
 }
 
-func AddVisitor(c *database.Controller, fac constants.Facility, requester *database.Controller, reason string) error {
+func AddVisitor(c *database2.Controller, fac constants.Facility, requester *database2.Controller, reason string) error {
 	if c.Facility == constants.Academy || c.Facility == constants.InactiveFacility {
 		return errors.New(fmt.Sprintf(
 			"controller %d is in %s and can not visit", c.Id, c.Facility))
@@ -76,7 +76,7 @@ func AddVisitor(c *database.Controller, fac constants.Facility, requester *datab
 	if IsVisiting(c, fac) {
 		return errors.New(fmt.Sprintf("controller %d is already visiting %s", c.Id, fac))
 	}
-	visit := database.ControllerVisit{
+	visit := database2.ControllerVisit{
 		ControllerID: c.Id,
 		Controller:   c,
 		Facility:     fac,
@@ -90,10 +90,10 @@ func AddVisitor(c *database.Controller, fac constants.Facility, requester *datab
 	return nil
 }
 
-func RemoveVisitor(controller *database.Controller, fac constants.Facility, requester *database.Controller, reason string) error {
+func RemoveVisitor(controller *database2.Controller, fac constants.Facility, requester *database2.Controller, reason string) error {
 	for _, v := range controller.Visits {
 		if v.Facility == fac {
-			result := database.DB.Delete(v)
+			result := database2.DB.Delete(v)
 			if result.Error != nil {
 				return result.Error
 			}
@@ -116,9 +116,9 @@ func RemoveVisitor(controller *database.Controller, fac constants.Facility, requ
 	return errors.New(fmt.Sprintf("Controller %d is not visiting %s", controller.Id, fac))
 }
 
-func RemoveAllVisits(controller *database.Controller, requester *database.Controller, reason string) error {
+func RemoveAllVisits(controller *database2.Controller, requester *database2.Controller, reason string) error {
 	for _, v := range controller.Visits {
-		result := database.DB.Delete(v)
+		result := database2.DB.Delete(v)
 		if result.Error != nil {
 			return result.Error
 		}

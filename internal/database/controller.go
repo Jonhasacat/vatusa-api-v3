@@ -1,9 +1,14 @@
 package database
 
 import (
+	"errors"
 	"github.com/VATUSA/api-v3/pkg/constants"
 	"gorm.io/gorm"
 	"time"
+)
+
+var (
+	ErrorInvalidFacility = errors.New("invalid facility")
 )
 
 type Controller struct {
@@ -57,6 +62,9 @@ func FetchControllersByHomeFacility(facility constants.Facility) ([]Controller, 
 }
 
 func FetchControllersByVisitingFacility(facility constants.Facility) ([]Controller, error) {
+	if !constants.IsRosterFacility(facility) {
+		return nil, ErrorInvalidFacility
+	}
 	var visits []ControllerVisit
 	visitResult := DB.Model(&ControllerVisit{}).
 		Where("facility = ?", facility).

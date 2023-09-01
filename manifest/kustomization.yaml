@@ -1,0 +1,10 @@
+resources:
+  - api-deployment.yaml
+  - api-service.yaml
+  - api-ingress.yaml
+
+images:
+  - name: vatusa/api-v3
+    newTag: "0.0.0"
+  - name: vatusa/api-v3-conversion
+    newTag: "0.0.0"

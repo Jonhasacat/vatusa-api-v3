@@ -1,8 +1,8 @@
 package api
 
 import (
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/auth"
-	"github.com/VATUSA/api-v3/pkg/database"
 	"github.com/VATUSA/api-v3/pkg/datamodel/response"
 	"github.com/labstack/echo/v4"
 	"net/http"

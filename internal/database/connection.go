@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"github.com/VATUSA/api-v3/pkg/config"
+	"github.com/VATUSA/api-v3/internal/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -41,6 +41,9 @@ func Connect() error {
 	DB, err = gorm.Open(mysql.New(mysql.Config{Conn: conn}), &gorm.Config{
 		Logger: dbLogger,
 	})
+	if err != nil {
+		return err
+	}
 	mysqlDB, err := DB.DB()
 	mysqlDB.SetMaxIdleConns(10)
 	mysqlDB.SetMaxOpenConns(100)

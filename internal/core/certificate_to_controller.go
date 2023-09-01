@@ -2,12 +2,12 @@ package core
 
 import (
 	"fmt"
+	database2 "github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	"github.com/VATUSA/api-v3/pkg/database"
 	"time"
 )
 
-func ControllerCertificateUpdated(c *database.Controller, certificate *database.Certificate) error {
+func ControllerCertificateUpdated(c *database2.Controller, certificate *database2.Certificate) error {
 	if c.ATCRating != certificate.Rating {
 		if constants.Rating(certificate.Rating) >= constants.Observer &&
 			constants.Rating(certificate.Rating) <= constants.I3 {
@@ -18,7 +18,7 @@ func ControllerCertificateUpdated(c *database.Controller, certificate *database.
 				return err
 			}
 			err = LogAction(c, fmt.Sprintf("Rating changed externally: %s -> %s",
-				constants.ShortMap[oldRating], constants.ShortMap[newRating]), nil)
+				constants.RatingShortMap[oldRating], constants.RatingShortMap[newRating]), nil)
 			if err != nil {
 				return err
 			}
@@ -82,9 +82,9 @@ func ControllerCertificateUpdated(c *database.Controller, certificate *database.
 	return nil
 }
 
-func NewController(certificate *database.Certificate) error {
+func NewController(certificate *database2.Certificate) (*database2.Controller, error) {
 	now := time.Now()
-	c := &database.Controller{
+	c := &database2.Controller{
 		Id:                        certificate.ID,
 		CertificateId:             certificate.ID,
 		Certificate:               certificate,
@@ -99,22 +99,22 @@ func NewController(certificate *database.Certificate) error {
 		c.Facility = constants.Academy
 		c.IsInDivision = true
 		if c.ATCRating == constants.Observer {
-			err := AddHold(c, constants.Academy, "New Member", nil)
+			err := AddHold(c, constants.Academy, "New Member", nil, nil)
 			if err != nil {
-				return err
+				return nil, err
 			}
 		} else {
-			err := AddHold(c, constants.RCEExam, "New Member", nil)
+			err := AddHold(c, constants.RCEExam, "New Member", nil, nil)
 			if err != nil {
-				return err
+				return nil, err
 			}
 		}
 	} else {
 		c.Facility = constants.NonMember
 		c.IsInDivision = false
-		err := AddHold(c, constants.RCEExam, "New Visitor", nil)
+		err := AddHold(c, constants.RCEExam, "New Visitor", nil, nil)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 	if c.ATCRating > constants.I3 {
@@ -124,8 +124,8 @@ func NewController(certificate *database.Certificate) error {
 	}
 	err := c.Save()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// TODO
-	return nil
+	return c, nil
 }

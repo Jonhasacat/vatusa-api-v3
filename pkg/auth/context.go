@@ -2,8 +2,8 @@ package auth
 
 import (
 	"github.com/VATUSA/api-v3/internal/core"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	db "github.com/VATUSA/api-v3/pkg/database"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,7 +19,7 @@ func IsStaff(c echo.Context) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
-	controllerModel := c.Get(FieldController).(db.Controller)
+	controllerModel := c.Get(FieldController).(database.Controller)
 	return core.IsStaff(&controllerModel, controllerModel.Facility)
 }
 
@@ -27,21 +27,21 @@ func IsSeniorStaff(c echo.Context) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
-	controllerModel := c.Get(FieldController).(db.Controller)
+	controllerModel := c.Get(FieldController).(database.Controller)
 	return core.IsSeniorStaff(&controllerModel, controllerModel.Facility)
 }
 func IsFacilityStaff(c echo.Context, facility constants.Facility) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
-	controllerModel := c.Get(FieldController).(db.Controller)
+	controllerModel := c.Get(FieldController).(database.Controller)
 	return core.IsStaff(&controllerModel, facility)
 }
 func IsFacilityTrainingStaff(c echo.Context, facility constants.Facility) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
-	controllerModel := c.Get(FieldController).(db.Controller)
+	controllerModel := c.Get(FieldController).(database.Controller)
 	return core.IsTrainingStaff(&controllerModel, facility)
 }
 
@@ -49,7 +49,7 @@ func IsFacilityInstructor(c echo.Context, facility constants.Facility) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
-	controllerModel := c.Get(FieldController).(db.Controller)
+	controllerModel := c.Get(FieldController).(database.Controller)
 	return core.IsInstructor(&controllerModel, facility)
 }
 
@@ -57,7 +57,7 @@ func IsFacilitySeniorStaff(c echo.Context, facility constants.Facility) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
-	controllerModel := c.Get(FieldController).(db.Controller)
+	controllerModel := c.Get(FieldController).(database.Controller)
 	return core.IsSeniorStaff(&controllerModel, facility)
 }
 
@@ -65,7 +65,7 @@ func IsFacilityATMOrDATM(c echo.Context, facility constants.Facility) bool {
 	if c.Get(FieldMethod) != Controller {
 		return false
 	}
-	controllerModel := c.Get(FieldController).(db.Controller)
+	controllerModel := c.Get(FieldController).(database.Controller)
 	return core.IsATMOrDATM(&controllerModel, facility)
 }
 
@@ -73,7 +73,7 @@ func IsFacilityToken(c echo.Context, facility constants.Facility) bool {
 	if c.Get(FieldMethod) != APIUser {
 		return false
 	}
-	apiUser := c.Get(FieldAPIUser).(db.APIUser)
+	apiUser := c.Get(FieldAPIUser).(database.APIUser)
 	return apiUser.Facility == facility || apiUser.Facility == "*"
 }
 

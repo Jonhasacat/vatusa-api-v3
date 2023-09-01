@@ -2,8 +2,8 @@ package auth
 
 import (
 	"errors"
-	"github.com/VATUSA/api-v3/pkg/config"
-	"github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/config"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"strconv"

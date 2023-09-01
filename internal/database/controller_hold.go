@@ -10,7 +10,7 @@ type ControllerHold struct {
 	ControllerID uint64
 	Controller   *Controller
 	Hold         string
-	ExpiresAt    time.Time
+	ExpiresAt    *time.Time
 }
 
 func (h *ControllerHold) Save() error {

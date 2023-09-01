@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
-	database2 "github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/database"
 )
 
 func main() {
-	err := database2.Connect()
+	err := database.Connect()
 	if err != nil {
 		return
 	}
-	err = database2.MigrateDB()
+	err = database.MigrateDB()
 	if err != nil {
 		return
 	}
@@ -19,11 +19,11 @@ func main() {
 	if err != nil {
 		return
 	}
-	user, err := database2.CreateAPIUser("Development API User", "*")
+	user, err := database.CreateAPIUser("Development API User", "*")
 	if err != nil {
 		return
 	}
-	token, err := database2.GenerateAPIToken(user, nil)
+	token, err := database.GenerateAPIToken(user, nil)
 	if err != nil {
 		return
 	}

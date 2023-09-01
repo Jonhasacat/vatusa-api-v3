@@ -7,6 +7,6 @@ const (
 )
 
 const (
-	Transfer = "TRANSFER"
-	Visit    = "VISIT"
+	Transfer = "transfer"
+	Visit    = "visit"
 )

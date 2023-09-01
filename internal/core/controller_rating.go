@@ -3,11 +3,11 @@ package core
 import (
 	"errors"
 	"fmt"
+	database2 "github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	"github.com/VATUSA/api-v3/pkg/database"
 )
 
-func ChangeRating(c *database.Controller, rating constants.Rating, requester *database.Controller) error {
+func ChangeRating(c *database2.Controller, rating constants.Rating, requester *database2.Controller) error {
 	if rating == c.ATCRating {
 		return errors.New(fmt.Sprintf(
 			"Controller %d already has rating %d", c.CertificateId, c.ATCRating))
@@ -26,18 +26,18 @@ func ChangeRating(c *database.Controller, rating constants.Rating, requester *da
 		requesterID = 0
 	}
 
-	ratingChange := database.RatingChange{
+	ratingChange := database2.RatingChange{
 		ControllerID: c.CertificateId,
 		FromRating:   c.ATCRating,
 		ToRating:     rating,
 		AdminID:      requesterID,
 	}
-	database.DB.Create(&ratingChange)
+	database2.DB.Create(&ratingChange)
 	c.Save()
 	return nil
 }
 
-func Promote(c *database.Controller, rating constants.Rating, requester *database.Controller) error {
+func Promote(c *database2.Controller, rating constants.Rating, requester *database2.Controller) error {
 	if constants.Rating(c.ATCRating) >= constants.C1 {
 		return errors.New(fmt.Sprintf("Controller %d is already C1 or higher!", c.CertificateId))
 	}

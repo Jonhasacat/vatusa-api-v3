@@ -3,12 +3,12 @@ package core
 import (
 	"errors"
 	"fmt"
+	database2 "github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	"github.com/VATUSA/api-v3/pkg/database"
 	"time"
 )
 
-func AcceptRosterRequest(request *database.ControllerRosterRequest, reason *string, requester *database.Controller) error {
+func AcceptRosterRequest(request *database2.ControllerRosterRequest, reason *string, requester *database2.Controller) error {
 	if request.Status != constants.StatusPending {
 		return errors.New(fmt.Sprintf("ControllerRosterRequest %d is not pending", request.ID))
 	}
@@ -17,7 +17,7 @@ func AcceptRosterRequest(request *database.ControllerRosterRequest, reason *stri
 	request.StatusReason = reason
 	request.AdminID = requester.Id
 
-	transfer := database.Transfer{
+	transfer := database2.Transfer{
 		ControllerID: request.ControllerID,
 		Controller:   request.Controller,
 		FromFacility: request.Controller.Facility,
@@ -27,14 +27,14 @@ func AcceptRosterRequest(request *database.ControllerRosterRequest, reason *stri
 
 	request.Controller.Facility = request.Facility
 	request.Controller.FacilityJoin = &now
-	database.DB.Save(request)
-	database.DB.Save(transfer)
+	database2.DB.Save(request)
+	database2.DB.Save(transfer)
 	request.Controller.Save()
 	// TODO
 	return nil
 }
 
-func RejectRosterRequest(request *database.ControllerRosterRequest, reason *string, requester *database.Controller) error {
+func RejectRosterRequest(request *database2.ControllerRosterRequest, reason *string, requester *database2.Controller) error {
 	if request.Status != constants.StatusPending {
 		return errors.New(fmt.Sprintf("ControllerRosterRequest %d is not pending", request.ID))
 	}
@@ -44,7 +44,7 @@ func RejectRosterRequest(request *database.ControllerRosterRequest, reason *stri
 	request.Status = constants.StatusAccepted
 	request.StatusReason = reason
 	request.AdminID = requester.Id
-	database.DB.Save(request)
+	database2.DB.Save(request)
 	// TODO
 	return nil
 }

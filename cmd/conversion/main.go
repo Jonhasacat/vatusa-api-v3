@@ -3,16 +3,16 @@ package main
 import (
 	"github.com/VATUSA/api-v3/internal/conversion"
 	"github.com/VATUSA/api-v3/internal/conversion/legacydb"
-	db "github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/database"
 )
 
 func main() {
-	err := db.Connect()
+	err := database.Connect()
 	if err != nil {
 		println(err)
 		return
 	}
-	err = db.MigrateDB()
+	err = database.MigrateDB()
 	if err != nil {
 		println(err)
 		return

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/VATUSA/api-v3/internal/core"
-	"github.com/VATUSA/api-v3/pkg/database"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/vatsim"
 	"gorm.io/gorm"
 	"io/ioutil"

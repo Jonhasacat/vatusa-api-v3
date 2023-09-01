@@ -3,16 +3,19 @@ package core
 import (
 	"errors"
 	"fmt"
+	"github.com/VATUSA/api-v3/internal/database"
 	"github.com/VATUSA/api-v3/pkg/constants"
-	"github.com/VATUSA/api-v3/pkg/database"
 	"time"
 )
 
-func AddHold(controller *database.Controller, hold constants.Hold, reason string, requester *database.Controller) error {
+func AddHold(controller *database.Controller, hold constants.Hold, reason string, expiresAt *time.Time, requester *database.Controller) error {
+	if HasHold(controller, hold) {
+		return nil
+	}
 	record := database.ControllerHold{
 		Controller: controller,
 		Hold:       hold,
-		ExpiresAt:  time.Time{},
+		ExpiresAt:  expiresAt,
 	}
 	err := record.Save()
 	if err != nil {
@@ -20,6 +23,15 @@ func AddHold(controller *database.Controller, hold constants.Hold, reason string
 	}
 	err = LogAction(controller, fmt.Sprintf("Hold %s applied: %s", hold, reason), requester)
 	return nil
+}
+
+func HasHold(controller *database.Controller, hold constants.Hold) bool {
+	for _, h := range controller.Holds {
+		if h.Hold == hold {
+			return true
+		}
+	}
+	return false
 }
 
 func RemoveHold(controller *database.Controller, hold constants.Hold, reason string, requester *database.Controller) error {
