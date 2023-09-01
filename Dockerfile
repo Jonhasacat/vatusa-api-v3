@@ -1,4 +1,4 @@
-FROM golang:1.18 AS build
+FROM golang:1.18.8-alpine3.16 AS build
 WORKDIR /go/src/github.com/VATUSA/api-v3/
 COPY go.mod ./
 COPY go.sum ./
