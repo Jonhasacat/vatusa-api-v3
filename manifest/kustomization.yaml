@@ -5,6 +5,6 @@ resources:
 
 images:
   - name: vatusa/api-v3
-    newTag: "0.0.0"
+    newTag: "0.0.1"
   - name: vatusa/api-v3-conversion
-    newTag: "0.0.0"
+    newTag: "0.0.1"
